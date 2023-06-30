@@ -1,0 +1,18 @@
+version: '3'
+services:
+  trading_bot:
+    image: "alphainsider/trading_bot:test"
+    build:
+      context: ./trading_bot
+      args:
+        - ENVIRONMENT=development
+    environment:
+      ALPHAINSIDER_API_KEY: ${ALPHAINSIDER_API_KEY}
+      STRATEGY_ID: ${STRATEGY_ID}
+      MARGIN_MULTIPLIER: ${MARGIN_MULTIPLIER}
+      ALPACA_KEY: ${ALPACA_KEY}
+      ALPACA_SECRET: ${ALPACA_SECRET}
+    volumes:
+      - ./trading_bot:/app/trading_bot
+      - /app/trading_bot/node_modules
+    command: bash -c "npm run dev"

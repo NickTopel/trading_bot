@@ -5,7 +5,7 @@ services:
     build:
       context: ./trading_bot
       args:
-        - ENVIRONMENT=development
+        - ENVIRONMENT=production
     environment:
       ALPHAINSIDER_API_KEY: ${ALPHAINSIDER_API_KEY}
       STRATEGY_ID: ${STRATEGY_ID}

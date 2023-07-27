@@ -2,7 +2,6 @@ import _ from 'lodash';
 import j from 'joi';
 import * as math from 'mathjs';
 import AlpacaAPI from '@alpacahq/alpaca-trade-api';
-import fs from "fs";
 
 class Alpaca {
   //CHECK: constructor <key> <secret> <account_type>
@@ -15,6 +14,7 @@ class Alpaca {
     }).required());
     
     //data
+    this.orderBuffer = '0.05';
     this.accountType = params.account_type;
     this.alp = new AlpacaAPI({
       keyId: params.key,
@@ -29,7 +29,6 @@ class Alpaca {
   }
   
   //CHECK: mapStocks <[{alpha_stocks}]>
-  //TODO: remove fs
   async mapStocks(params) {
     //validate
     j.assert(params, j.object({
@@ -38,7 +37,7 @@ class Alpaca {
     
     //get stocks
     let alphaStocks = params.alpha_stocks;
-    /*let [brokerStocks, brokerCrypto] = await Promise.all([
+    let [brokerStocks, brokerCrypto] = await Promise.all([
       this.alp.getAssets({status: 'active'}),
       this.alp.getAssets({asset_class: 'crypto', status: 'active'})
     ]);
@@ -50,12 +49,7 @@ class Alpaca {
       prev[_.replace(curr.symbol, '/', '')] = curr;
       return prev;
     }, {}).value();
-    let brokerStockKeys = {...stockKeys, ...cryptoKeys};*/
-    
-    //TODO: remove
-    //fs.writeFileSync('brokerStockKeys.json', JSON.stringify(brokerStockKeys));
-    let rawBrokerStockKeys = fs.readFileSync('brokerStockKeys.json');
-    let brokerStockKeys = JSON.parse(rawBrokerStockKeys);
+    let brokerStockKeys = {...stockKeys, ...cryptoKeys};
     
     //set broker stocks
     let calcPrecision = (increment) => {
@@ -86,109 +80,43 @@ class Alpaca {
     return stockMap;
   }
   
-  //TODO: getStockPrices <[broker_stock_ids]>
-  //change bid and ask to last price
-  async getStockPrices(params) {
-    //validate
-    j.assert(params, j.object({
-      broker_stock_ids: j.array().items(j.string().required()).required()
-    }).required());
-    
-    //separate stocks and crypto
-    let {stocks, crypto} = params.broker_stock_ids.reduce((prev, curr) => {
-      let brokerStock = this.brokerStocks[curr];
-      if(brokerStock.security === 'stock') prev.stocks = [...prev.stocks, brokerStock.id];
-      else prev.crypto = [...prev.crypto, brokerStock.id];
-      return prev;
-    }, {stocks: [], crypto: []});
-    
-    //get stocks and crypto quotes
-    let [stockQuotes, cryptoQuotes] = await Promise.all([
-      ((stocks.length > 0) ? this.alp.getLatestQuotes(stocks) : []),
-      ((crypto.length > 0) ? this.alp.getLatestCryptoQuotes(crypto) : [])
-    ]);
-    let quotes = {...Object.fromEntries(stockQuotes), ...Object.fromEntries(cryptoQuotes)};
-    
-    //format quotes
-    let formattedQuotes = params.broker_stock_ids.reduce((prev, curr) => {
-      let brokerStock = this.brokerStocks[curr];
-      let quote = quotes[brokerStock.id];
-      prev[curr] = {
-        bid: ((_.isNumber(quote.BidPrice)) ? quote.BidPrice+'' : undefined),
-        ask: ((_.isNumber(quote.AskPrice)) ? quote.AskPrice+'' : undefined)
-      }
-      return prev;
-    }, {});
-    
-    //return
-    return formattedQuotes;
-  }
-  
   //CHECK: getAccountDetails
   async getAccountDetails() {
-    //get account details
-    let accountDetails = await this.alp.getAccount();
+    //get account details and positions
+    let [accountDetails, positions] = await Promise.all([
+      this.alp.getAccount(),
+      this.alp.getPositions()
+    ]);
     
-    //check what margin types are available on this user account
-    let marginTypes = [];
-    if(!accountDetails.trading_blocked) {
-      marginTypes.push('exchange');
-      if(accountDetails.shorting_enabled) marginTypes.push('reg_t');
+    //calculate buying power
+    let buyingPower = math.evaluate('bignumber(a) * 2', {a: accountDetails.portfolio_value}).toString();
+    if(accountDetails.pattern_day_trader) {
+      let startOfDayBuyingPower = math.evaluate('4 * (bignumber(a) - bignumber(b))', {a: accountDetails.last_equity, b: accountDetails.last_maintenance_margin}).toString();
+      if(math.evaluate('a < b', {a: startOfDayBuyingPower, b: buyingPower})) buyingPower = startOfDayBuyingPower;
     }
+    
+    //format positions
+    positions = positions.map((position) => {
+      if(position.asset_class === 'crypto' && !position.symbol.includes('/')) {
+        position.symbol = _.trimEnd(position.symbol, 'USD') + '/USD';
+      }
+      return {
+        id: position.symbol,
+        amount: position.qty,
+        bid: undefined,
+        ask: undefined
+      };
+    });
     
     //return
     return {
       account_id: accountDetails.id,
-      account_type: this.accountType,
-      margin_types_available: marginTypes,
-      portfolio_value: accountDetails.portfolio_value
+      margin_types_available: ['reg_t'],
+      order_buffer: this.orderBuffer,
+      value: accountDetails.portfolio_value,
+      buying_power: buyingPower,
+      positions: positions
     }
-  }
-  
-  //CHECK: getPositions
-  async getPositions() {
-    //get positions and account details
-    let [brokerPositions, accountDetails] = await Promise.all([
-      this.alp.getPositions(),
-      this.alp.getAccount()
-    ]);
-    
-    //convert crypto symbols
-    brokerPositions = brokerPositions.map((position) => {
-      if(position.asset_class === 'crypto' && !position.symbol.includes('/')) {
-        position.symbol = _.trimEnd(position.symbol, 'USD') + '/USD';
-      }
-      return position;
-    });
-    
-    //get stock prices
-    let stockPrices = {};
-    if(brokerPositions.length > 0) {
-      stockPrices = await this.getStockPrices({
-        broker_stock_ids: _.map(brokerPositions, 'symbol')
-      });
-    }
-    
-    //map prices to positions
-    brokerPositions = brokerPositions.map((position) => {
-      return {
-        id: position.symbol,
-        amount: position.qty,
-        bid: stockPrices[position.symbol].bid,
-        ask: stockPrices[position.symbol].ask
-      }
-    });
-    
-    //add cash to broker positions
-    brokerPositions.push({
-      id: undefined,
-      amount: accountDetails.cash,
-      bid: '1',
-      ask: '1'
-    });
-    
-    //return
-    return brokerPositions;
   }
   
   //CHECK: closeAllPositions
@@ -211,38 +139,14 @@ class Alpaca {
     return this._formatOrders({orders: orders});
   }
   
-  //CHECK: getOpenOrders
-  async getOpenOrders() {
-    //get all open orders
-    let getAllOrders = async (after = undefined, limit = 200) => {
-      let orders = await this.alp.getOrders({
-        status: 'open',
-        direction: 'asc',
-        limit: limit,
-        after: after
-      });
-      if(orders.length >= limit) {
-        let lastOrder = _.last(orders);
-        let moreOrders = await getAllOrders(lastOrder.submitted_at);
-        return _.concat(orders, moreOrders);
-      }
-      return orders;
-    }
-    let allOrders = await getAllOrders();
-    
-    //return
-    return this._formatOrders({orders: allOrders});
-  }
-  
-  //CHECK: newOrder <broker_stock_id> <type> <action> <amount> <price>
+  //CHECK: newOrder <broker_stock_id> <type> <action> <amount>
   async newOrder(params) {
     //validate
     j.assert(params, j.object({
       broker_stock_id: j.string().required(),
       type: j.string().valid('close', 'sell_long', 'buy_short', 'buy_long', 'sell_short').required(),
       action: j.string().valid('buy', 'sell').required(),
-      amount: j.number().unsafe().greater(0).required(),
-      price: j.number().min(0).required(),
+      amount: j.number().unsafe().greater(0).required()
     }).required());
     
     //get stock
@@ -255,9 +159,8 @@ class Alpaca {
       amount = math.fix(params.amount, 0).toString();
     }
     
-    //skip order if less than min_total
-    let isLessThanMinTotal = math.evaluate('bignumber(a) * bignumber(b) < bignumber(c)', {a: amount, b: params.price, c: brokerStock.min_total});
-    if(params.type !== 'close' && isLessThanMinTotal) return undefined;
+    //skip if amount is zero
+    if(math.evaluate('bignumber(a) == 0', {a: amount})) return undefined;
     
     //close position
     let order = undefined;

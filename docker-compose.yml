@@ -10,8 +10,10 @@ services:
       ALPHAINSIDER_API_KEY: ${ALPHAINSIDER_API_KEY}
       STRATEGY_ID: ${STRATEGY_ID}
       MARGIN_MULTIPLIER: ${MARGIN_MULTIPLIER}
+      BUFFER_AMOUNT: ${BUFFER_AMOUNT}
       ALPACA_KEY: ${ALPACA_KEY}
       ALPACA_SECRET: ${ALPACA_SECRET}
+      ALPACA_ACCOUNT_TYPE: ${ALPACA_ACCOUNT_TYPE}
     volumes:
       - ./trading_bot:/app/trading_bot
       - /app/trading_bot/node_modules

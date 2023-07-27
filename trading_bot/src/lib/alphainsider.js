@@ -2,16 +2,11 @@ import _ from 'lodash';
 import j from 'joi';
 import axios from 'axios';
 import * as math from 'mathjs';
-import {EventEmitter} from 'events';
-import Sockette from 'sockette';
-import WebSocket from 'ws'; global.WebSocket = WebSocket;
+import WebSocket from 'ws';
 
-class AlphaInsider extends EventEmitter {
+class AlphaInsider {
   //DONE: constructor <api_key> <strategy_id>
   constructor(params) {
-    //init event emitter
-    super();
-    
     //validate
     j.assert(params, j.object({
       api_key: j.string().required(),
@@ -21,13 +16,12 @@ class AlphaInsider extends EventEmitter {
     //data
     this.apiKey = params.api_key;
     this.strategyId = params.strategy_id;
+    this.ws = undefined;
     
     this.alphaStocks = undefined;
     
     //init
-    this.ready = (async () => {
-      await this.wsPositions();
-    })();
+    this.ready = (async () => {})();
   }
   
   //DONE: getAllStocks
@@ -81,25 +75,155 @@ class AlphaInsider extends EventEmitter {
   
   //CHECK: getStrategyDetails
   async getStrategyDetails() {
-    //get strategy details
-    let strategyDetails = await axios({
-      method: 'get',
-      headers: {
-        authorization: this.apiKey
-      },
-      url: 'https://alphainsider.com/api/getStrategies',
-      params: {
-        strategy_id: [this.strategyId]
-      }
-    })
-    .then((data) => data.data.response[0]);
+    //get strategy details and positions
+    let [strategyDetails, positions] = await Promise.all([
+      axios({
+        method: 'get',
+        headers: {
+          authorization: this.apiKey
+        },
+        url: 'https://alphainsider.com/api/getStrategies',
+        params: {
+          strategy_id: [this.strategyId]
+        }
+      })
+      .then((data) => data.data.response[0]),
+      this._getPositions()
+    ]);
+    
+    //calculate strategy value and gross exposure
+    let {strategyValue, grossExposure} = positions.reduce((prev, curr) => {
+      let price = ((math.evaluate('a >= 0', {a: curr.amount})) ? curr.bid : curr.ask);
+      prev.strategyValue = math.evaluate('bignumber(a) + (bignumber(b) * bignumber(c))', {a: prev.strategyValue, b: curr.amount, c: price}).toString();
+      prev.grossExposure = math.evaluate('bignumber(a) + (abs(bignumber(b)) * bignumber(c))', {a: prev.grossExposure, b: curr.amount, c: price}).toString();
+      return prev;
+    }, {strategyValue: '0', grossExposure: '0'});
+    
+    //calculate buying power
+    let buyingPower = math.evaluate('bignumber(a) * 5', {a: strategyValue}).toString();
+    if(math.evaluate('a > b', {a: grossExposure, b: buyingPower})) buyingPower = grossExposure;
+    
+    //remove cash and calculate percents
+    positions = positions.reduce((prev, curr) => {
+      if(!curr.id) return prev;
+      let price = ((math.evaluate('a >= 0', {a: curr.amount})) ? curr.bid : curr.ask);
+      prev.push({
+        ...curr,
+        percent: math.evaluate('(abs(bignumber(a)) * bignumber(b)) / bignumber(c)', {a: curr.amount, b: price, c: buyingPower}).toString()
+      });
+      return prev;
+    }, []);
     
     //return
-    return strategyDetails;
+    return {
+      strategy_id: strategyDetails.strategy_id,
+      type: strategyDetails.type,
+      value: strategyValue,
+      buying_power: buyingPower,
+      positions: positions
+    };
   }
   
-  //CHECK: getPositions
-  async getPositions() {
+  //CHECK: wsPositions <cb>
+  async wsPositions(cb) {
+    return new Promise((resolve, reject) => {
+      //validate
+      j.assert(cb, j.any().required());
+      
+      //init
+      let endpoint = ((process.env['NODE_ENV'] === 'development') ? 'ws://127.0.0.1:3000' : 'wss://alphainsider.com/ws');
+      let channel = 'wsPositions:'+this.strategyId;
+      
+      //reset existing websocket
+      if(this.ws) {
+        clearInterval(this.ws.heartbeat);
+        this.ws.removeAllListeners();
+        this.ws.terminate();
+        this.ws = undefined;
+      }
+      
+      //start new websocket
+      this.ws = new WebSocket(endpoint);
+      
+      //start heartbeat
+      this.ws.heartbeat = setInterval(() => {
+        //if connected and subscribed, ping
+        if(this.ws.isConnected && this.ws.isSubscribed) {
+          this.ws.isConnected = false;
+          this.ws.ping();
+        }
+        //else, reconnect
+        else {
+          this.wsPositions(cb).catch(reject);
+        }
+      }, 30000);
+      
+      //on open, subscribe to strategy positions
+      this.ws.on('open', () => {
+        //set connected flag
+        this.ws.isConnected = true;
+        //subscribe to strategy positions
+        this.ws.send(JSON.stringify({
+          event: 'subscribe',
+          payload: {
+            channels: [channel],
+            token: this.apiKey
+          }
+        }));
+      });
+      
+      //on message, run callback function
+      this.ws.on('message', (data) => {
+        //parse message
+        let response = JSON.parse(data);
+        //subscribed, set subscribed flag
+        if(response.event === 'subscribe' && response.response.includes(channel)) {
+          this.ws.isSubscribed = true;
+        }
+        //positions, run callback function
+        else if(response.event === 'wsPositions' && response.channel === channel) {
+          Promise.resolve(response.response).then(cb).catch(reject);
+        }
+        //error, reconnect
+        else if(response.event === 'error') {
+          reject(response.response);
+        }
+      });
+      
+      //on pong, set connected flag
+      this.ws.on('pong', () => {
+        this.ws.isConnected = true;
+      });
+      
+      //on close, reconnect
+      this.ws.on('close', (data) => {
+        console.log('Websocket CLOSED - Reconnecting...');
+        setTimeout(() => this.wsPositions(cb).catch(reject), 3000);
+      });
+      
+      //on error, reconnect
+      this.ws.on('error', (error) => {
+        console.log('Websocket ERROR - Reconnecting...');
+        setTimeout(() => this.wsPositions(cb).catch(reject), 3000);
+      });
+    })
+    
+    //handle exit errors
+    .catch((error) => {
+      //reset existing websocket
+      if(this.ws) {
+        clearInterval(this.ws.heartbeat);
+        this.ws.removeAllListeners();
+        this.ws.terminate();
+        this.ws = undefined;
+      }
+      //propagate error upwards
+      throw error;
+    });
+  }
+  
+  //CHECK: _getPositions
+  async _getPositions() {
     //get strategy positions
     let strategyPositions = await axios({
       method: 'get',
@@ -128,42 +252,6 @@ class AlphaInsider extends EventEmitter {
     
     //return
     return strategyPositions;
-  }
-  
-  //TODO: wsPositions
-  //make program not hang if not using wsPositions
-  async wsPositions() {
-    //subscribe to wsPositions
-    let subscribe = (ws) => {
-      ws.json({
-        event: 'subscribe',
-        payload: {
-          channels: ['wsPositions:'+this.strategyId],
-          token: this.apiKey
-        }
-      });
-    }
-    
-    //handle messages
-    let handleMessage = (data) => {
-      let response = JSON.parse(data);
-      if(response.event === 'wsPositions') {
-        this.emit('trade', response.response);
-      }
-    }
-    
-    //handle errors
-    let handleError = (error) => {
-      
-    }
-    
-    //start websocket
-    let ws = new Sockette('wss://alphainsider.com/ws', {
-      onopen: () => subscribe(ws),
-      onreconnect: () => subscribe(ws),
-      onmessage: (event) => handleMessage(event.data),
-      onmaximum: (error) => handleError(error)
-    });
   }
 }
 

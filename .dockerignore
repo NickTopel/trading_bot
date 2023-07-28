@@ -1,5 +1,9 @@
 .idea/
 node_modules/
 package-lock.json
+.env.example
+docker-compose.yml
+README.md
 
+.env
 test.js

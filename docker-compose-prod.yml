@@ -1,0 +1,6 @@
+version: '3'
+services:
+  trading_bot:
+    build:
+      context: ./
+    image: "alphainsider/trading_bot:${VERSION}"

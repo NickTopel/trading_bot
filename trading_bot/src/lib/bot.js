@@ -70,8 +70,7 @@ class Bot {
     return _.compact(executedOrders);
   }
   
-  //TODO: calculateNewOrders
-  //if there's sufficent buying power remaining, don't break up the final order
+  //CHECK: calculateNewOrders
   async calculateNewOrders() {
     //get strategy details and broker details
     let [strategyDetails, brokerDetails] = await Promise.all([
@@ -110,19 +109,23 @@ class Bot {
     }, {});
     
     //final state
-    let finalState = _.reduce(strategyDetails.positions, (prev, curr) => {
+    let {finalState, finalStateBuyingPower} = _.reduce(strategyDetails.positions, (prev, curr) => {
       let brokerId = this.alphaBrokerIndex[curr.id];
       let isLong = math.evaluate('a >= 0', {a: curr.amount});
       let price = ((isLong) ? curr.bid : curr.ask);
-      prev[brokerId] = math.evaluate('bignumber(a) * bignumber(b) / bignumber(c) * bignumber(d) * bignumber(e)', {
+      let total = math.evaluate('bignumber(a) * bignumber(b) * bignumber(c)', {
         a: brokerBuyingPower,
         b: curr.percent,
-        c: price,
-        d: ((isLong) ? '1' : '-1'),
-        e: this.multiplier
+        c: this.multiplier
       }).toString();
+      prev.finalState[brokerId] = math.evaluate('bignumber(a) / bignumber(b) * bignumber(c)', {
+        a: total,
+        b: price,
+        c: ((isLong) ? '1' : '-1')
+      }).toString();
+      prev.finalStateBuyingPower = math.evaluate('bignumber(a) + bignumber(b)', {a: prev.finalStateBuyingPower, b: total}).toString();
       return prev;
-    }, {});
+    }, {finalState: {}, finalStateBuyingPower: 0});
     
     //calculate new orders to go from current state to final state
     let isPositive = (a) => math.evaluate('bignumber(a) > 0', {a: a});
@@ -171,12 +174,14 @@ class Bot {
     
     //handle order buffers
     let bufferedOrders = [];
-    if(math.evaluate('a > 0', {a: brokerDetails.order_buffer})) {
+    let hasOrderBuffer = math.evaluate('a > 0', {a: brokerDetails.order_buffer});
+    let closeToBuyingPower = math.evaluate('bignumber(a) * (1-bignumber(b)) < bignumber(c)', {a: brokerBuyingPower, b: brokerDetails.order_buffer, c: finalStateBuyingPower});
+    if(hasOrderBuffer && closeToBuyingPower) {
       //order asc
       increasePositions = _.orderBy(increasePositions, (item) => math.evaluate('abs(bignumber(a))', {a: item.total}).toString(), 'asc');
-      //get largest order
+      //get the largest order
       let largestIncreaseOrder = increasePositions.pop();
-      //recursively split largest order
+      //recursively split the largest order
       let recursiveOrderBuffer = (order) => {
         //skip if no order
         if(!order) return [];

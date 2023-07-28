@@ -3,7 +3,7 @@ services:
   trading_bot:
     image: "alphainsider/trading_bot:test"
     build:
-      context: ./trading_bot
+      context: ./
       args:
         - ENVIRONMENT=production
     environment:
@@ -15,6 +15,6 @@ services:
       ALPACA_SECRET: ${ALPACA_SECRET}
       ALPACA_ACCOUNT_TYPE: ${ALPACA_ACCOUNT_TYPE}
     volumes:
-      - ./trading_bot:/app/trading_bot
+      - ./:/app/trading_bot
       - /app/trading_bot/node_modules
     command: bash -c "npm run dev"

@@ -24,6 +24,9 @@ class Bot {
     this.prevStrategyPositions = [];
     this.alphaBrokerIndex = undefined;
     
+    this.rebalancing = false;
+    this.repeatRebalance = false;
+    
     //init
     this.ready = (async () => {
       this.AlphaInsider = await params.AlphaInsider;
@@ -209,25 +212,42 @@ class Bot {
     return [closePositions, decreasePositions, increasePositions, ...bufferedOrders];
   }
   
-  //TODO: rebalance
-  //handle errors
+  //CHECK: rebalance
   async rebalance() {
-    //cancel all open orders
-    await this.Broker.cancelAllOpenOrders();
+    //start transaction
+    if(this.rebalancing) {
+      this.repeatRebalance = true;
+      return;
+    }
+    this.rebalancing = true;
     
-    //calculate new orders
-    let newOrders = await this.calculateNewOrders();
+    //rebalance
+    return Promise.resolve()
+    .then(async () => {
+      //cancel all open orders
+      await this.Broker.cancelAllOpenOrders();
+      
+      //calculate new orders
+      let newOrders = await this.calculateNewOrders();
+      
+      //execute new orders
+      let orders = await this.executeOrders({orders: newOrders});
+      
+      //return
+      return orders;
+    })
     
-    //execute new orders
-    let orders = await this.executeOrders({orders: newOrders});
-    
-    //return
-    return orders;
-    
-    //TODO: handle errors
+    //end transaction
+    .finally(() => {
+      this.rebalancing = false;
+      if(this.repeatRebalance) {
+        this.repeatRebalance = false;
+        this.rebalance();
+      }
+    });
   }
   
-  //TODO: error <type> <message>
+  //TODO: error <error>
     //cancel all open orders
     //close all positions
     //send notification

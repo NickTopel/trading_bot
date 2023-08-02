@@ -11,14 +11,6 @@
       "description": "",
       "required": true
     },
-    "MARGIN_MULTIPLIER": {
-      "description": "",
-      "value": 1
-    },
-    "BUFFER_AMOUNT": {
-      "description": "",
-      "value": 0
-    },
     "ALPACA_KEY": {
       "description": "",
       "required": true
@@ -29,7 +21,8 @@
     },
     "ALPACA_ACCOUNT_TYPE": {
       "description": "",
-      "value": "paper"
+      "value": "paper",
+      "required": false
     }
   }
 }

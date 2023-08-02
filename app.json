@@ -5,8 +5,7 @@
   "env": {
     "ALPHAINSIDER_API_KEY": {
       "description": "",
-      "required": true,
-      "generator": "secret"
+      "required": true
     },
     "STRATEGY_ID": {
       "description": "",
@@ -22,13 +21,11 @@
     },
     "ALPACA_KEY": {
       "description": "",
-      "required": true,
-      "generator": "secret"
+      "required": true
     },
     "ALPACA_SECRET": {
       "description": "",
-      "required": true,
-      "generator": "secret"
+      "required": true
     },
     "ALPACA_ACCOUNT_TYPE": {
       "description": "",

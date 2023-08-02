@@ -1,0 +1,15 @@
+environment:
+  # node
+  NODE_ENV: "production"
+packages:
+  - name: store
+    environment:
+      # AlphaInsider
+      ALPHAINSIDER_API_KEY: "${ALPHAINSIDER_API_KEY}"
+      STRATEGY_ID: "${ALPHAINSIDER_API_KEY}"
+      MARGIN_MULTIPLIER: "${ALPHAINSIDER_API_KEY}"
+      BUFFER_AMOUNT: "${ALPHAINSIDER_API_KEY}"
+      # Alpaca
+      ALPACA_KEY: "${ALPHAINSIDER_API_KEY}"
+      ALPACA_SECRET: "${ALPHAINSIDER_API_KEY}"
+      ALPACA_ACCOUNT_TYPE: "${ALPHAINSIDER_API_KEY}"

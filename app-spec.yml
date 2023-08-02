@@ -1,0 +1,19 @@
+workers:
+  - name: trading-bot
+    envs:
+      # AlphaInsider
+      - key: ALPHAINSIDER_API_KEY
+        scope: RUN_TIME
+      - key: STRATEGY_ID
+        scope: RUN_TIME
+      - key: MARGIN_MULTIPLIER
+        scope: RUN_TIME
+      - key: BUFFER_AMOUNT
+        scope: RUN_TIME
+      # Alpaca
+      - key: ALPACA_KEY
+        scope: RUN_TIME
+      - key: ALPACA_SECRET
+        scope: RUN_TIME
+      - key: ALPACA_ACCOUNT_TYPE
+        scope: RUN_TIME

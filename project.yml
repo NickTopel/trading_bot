@@ -2,7 +2,7 @@ environment:
   # node
   NODE_ENV: "production"
 packages:
-  - name: store
+  - name: alphainsider-trading-bot
     environment:
       # AlphaInsider
       ALPHAINSIDER_API_KEY: "${ALPHAINSIDER_API_KEY}"

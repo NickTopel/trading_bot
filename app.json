@@ -5,8 +5,7 @@
   "formation": {
     "worker": {
       "quantity": 1,
-      "size": "standard-1X",
-      "command": "npm start"
+      "size": "basic"
     }
   },
   "env": {

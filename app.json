@@ -3,6 +3,10 @@
   "description": "Follow strategies on AlphaInsider and make trades on your brokerage.",
   "repository": "https://github.com/AlphaInsider/trading_bot",
   "formation": {
+    "web": {
+      "quantity": 0,
+      "size": "free"
+    },
     "worker": {
       "quantity": 1,
       "size": "Basic"

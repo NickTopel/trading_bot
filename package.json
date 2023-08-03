@@ -2,10 +2,10 @@
   "name": "trading_bot",
   "version": "1.0.0",
   "private": true,
-  "main": "src/index.js",
+  "main": "app.js",
   "type": "module",
   "scripts": {
-    "start": "node app.js",
+    "start": "node .",
     "dev": "nodemon --watch . app.js"
   },
   "dependencies": {

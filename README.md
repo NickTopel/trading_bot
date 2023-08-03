@@ -3,6 +3,8 @@
 # trading_bot
 Trading bot that follows AlphaInsider strategies
 
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
 ## Run
 `$ docker compose up`
 

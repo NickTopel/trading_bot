@@ -1,6 +1,6 @@
-import _ from 'lodash';
-import j from 'joi';
-import * as math from 'mathjs';
+const _ = require('lodash');
+const j = require('joi');
+const math = require('mathjs');
 
 class Bot {
   //CHECK: constructor <AlphaInsider> <Broker> <margin_type> --multiplier-- --buffer_amount--
@@ -253,7 +253,7 @@ class Bot {
     //send notification
 }
 
-export default async (params) => {
+module.exports = async (params) => {
   let newClass = new Bot(params);
   await newClass.ready;
   return newClass;

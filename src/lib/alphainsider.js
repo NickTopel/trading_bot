@@ -1,8 +1,8 @@
-import _ from 'lodash';
-import j from 'joi';
-import axios from 'axios';
-import * as math from 'mathjs';
-import WebSocket from 'ws';
+const _ = require('lodash');
+const j = require('joi');
+const math = require('mathjs');
+const axios = require('axios');
+const WebSocket = require('ws');
 
 class AlphaInsider {
   //DONE: constructor <api_key> <strategy_id>
@@ -255,7 +255,7 @@ class AlphaInsider {
   }
 }
 
-export default async (params) => {
+module.exports = async (params) => {
   let newClass = new AlphaInsider(params);
   await newClass.ready;
   return newClass;

@@ -1,7 +1,7 @@
-import _ from 'lodash';
-import j from 'joi';
-import * as math from 'mathjs';
-import AlpacaAPI from '@alpacahq/alpaca-trade-api';
+const _ = require('lodash');
+const j = require('joi');
+const math = require('mathjs');
+const AlpacaAPI = require('@alpacahq/alpaca-trade-api');
 
 class Alpaca {
   //CHECK: constructor <key> <secret> <account_type>
@@ -262,7 +262,7 @@ class Alpaca {
   }
 }
 
-export default async (params) => {
+module.exports = async (params) => {
   let newClass = new Alpaca(params);
   await newClass.ready;
   return newClass;

@@ -30,10 +30,5 @@
       "value": "paper",
       "required": false
     }
-  },
-  "buildpacks": [
-    {
-      "url": "heroku/nodejs"
-    }
-  ]
+  }
 }

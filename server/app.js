@@ -1,18 +1,5 @@
-const express = require('express');
-const app = express();
+let lib = require('./src/index.js');
 
-const lib = require('./src/index.js');
-
-
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
-
-app.listen(process.env['PORT'] || 3000, () => {
-  console.log(`Trader bot is listening on port ${process.env['PORT'] || 3000}`)
-});
-  
-// Start Worker
 (async () => {
   let alphaInsider = await lib.AlphaInsider({
     api_key: process.env['ALPHAINSIDER_API_KEY'],
@@ -31,7 +18,7 @@ app.listen(process.env['PORT'] || 3000, () => {
     buffer_amount: 0
   });
 
-//watch for trades and rebalance
+  //watch for trades and rebalance
   alphaInsider.wsPositions(async () => {
     console.log('REBALANCE');
     await bot.rebalance();

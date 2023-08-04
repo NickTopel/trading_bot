@@ -1,0 +1,14 @@
+{
+  "name": "trading_bot_desktop",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "build": "pkg app.js --out-path dist/"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1"
+  },
+  "dependencies": {
+    "trading_bot": "file:.."
+  }
+}

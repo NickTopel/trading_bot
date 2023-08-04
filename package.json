@@ -1,12 +1,9 @@
 {
   "name": "trading_bot",
   "version": "1.0.0",
-  "private": true,
-  "main": "src/index.js",
-  "type": "module",
+  "main": "index.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon --watch . app.js"
+    "test": "node test.js"
   },
   "dependencies": {
     "@alpacahq/alpaca-trade-api": "^3.0.1",
@@ -16,8 +13,5 @@
     "mathjs": "^11.8.0",
     "moment": "^2.29.4",
     "ws": "^8.13.0"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.22"
   }
 }

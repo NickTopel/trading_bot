@@ -9,6 +9,6 @@
     "pkg": "^5.8.1"
   },
   "dependencies": {
-    "trading_bot": "file:.."
+    "@alphainsider/trading_bot": "file:.."
   }
 }

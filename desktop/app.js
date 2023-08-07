@@ -1,4 +1,4 @@
-let lib = require('trading_bot');
+let lib = require('@alphainsider/trading_bot');
 
 //prompt user for values
 let alphaInsiderApiKey = '';

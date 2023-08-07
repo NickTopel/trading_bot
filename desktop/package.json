@@ -1,6 +1,7 @@
 {
   "name": "trading_bot_desktop",
   "version": "1.0.0",
+  "private": true,
   "main": "app.js",
   "scripts": {
     "build": "pkg app.js --out-path dist/"

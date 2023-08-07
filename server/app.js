@@ -30,7 +30,7 @@ let bot = new lib.Bot({
 });
 
 //watch for trades and rebalance
-alphaInsider.wsPositions(async () => {
+alphaInsider.wsConnect(async () => {
   console.log('REBALANCE');
   await bot.rebalance();
 })

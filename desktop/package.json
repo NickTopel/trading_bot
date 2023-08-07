@@ -4,12 +4,13 @@
   "private": true,
   "main": "app.js",
   "scripts": {
-    "build": "pkg app.js --out-path dist/"
-  },
-  "devDependencies": {
-    "pkg": "^5.8.1"
+    "build": "ncc build app.js -o dist/ && pkg dist/index.js --out-path dist/ && rm dist/index.js"
   },
   "dependencies": {
-    "trading_bot": "file:.."
+    "@alphainsider/trading_bot": "file:.."
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.36.1",
+    "pkg": "^5.8.1"
   }
 }

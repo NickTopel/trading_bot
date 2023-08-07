@@ -4,6 +4,7 @@
   "private": true,
   "main": "app.js",
   "scripts": {
+    "start": "node .",
     "build": "ncc build app.js -o dist/ && pkg dist/index.js --out-path dist/ && rm dist/index.js"
   },
   "dependencies": {

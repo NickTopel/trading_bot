@@ -25,8 +25,8 @@ let bot = new lib.Bot({
   AlphaInsider: alphaInsider,
   Broker: alpaca,
   margin_type: 'reg_t',
-  multiplier: 1,
-  buffer_amount: 0
+  multiplier: process.env['MARGIN_MULTIPLIER'] || 1,
+  buffer_amount: process.env['BUFFER_AMOUNT'] || 0
 });
 
 //watch for trades and rebalance

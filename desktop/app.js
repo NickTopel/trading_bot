@@ -27,7 +27,7 @@ let bot = new lib.Bot({
 });
 
 //watch for trades and rebalance
-alphaInsider.wsPositions(async () => {
+alphaInsider.wsConnect(async (message) => {
   console.log('REBALANCE');
   await bot.rebalance();
 })
@@ -35,3 +35,6 @@ alphaInsider.wsPositions(async () => {
   console.log('ERROR');
   console.log(error);
 });
+
+//TODO: remap stocks at end of day (bot.mapStocks() every 24 hours after market hours)
+  //TODO: find out when we run new stocks cronjob, make bot.mapStocks happen after that time

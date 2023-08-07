@@ -4,8 +4,6 @@ FROM node:lts
 ARG ENVIRONMENT=production
 ENV NODE_ENV=$ENVIRONMENT
 
-RUN echo $NODE_ENV
-
 WORKDIR /app/server
 COPY ./ ./
 

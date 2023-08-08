@@ -29,12 +29,23 @@ let bot = new lib.Bot({
   buffer_amount: process.env['BUFFER_AMOUNT'] || 0
 });
 
-//watch for trades and rebalance
-alphaInsider.wsConnect(async () => {
+//connect to websocket
+alphaInsider.wsConnect();
+
+//on trade, rebalance
+alphaInsider.on('message', (message) => {
   console.log('REBALANCE');
-  await bot.rebalance();
-})
-.catch((error) => {
+  bot.rebalance();
+});
+
+//on error, log error
+alphaInsider.on('error', (error) => {
   console.log('ERROR');
   console.log(error);
+});
+
+//on close, close all positions
+alphaInsider.on('close', () => {
+  console.log('CLOSE ALL POSITIONS');
+  alpaca.closeAllPositions();
 });

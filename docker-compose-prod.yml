@@ -2,5 +2,5 @@ version: '3'
 services:
   server:
     build:
-      context: ./
+      context: ./server
     image: "alphainsider/trading_bot:${VERSION}"

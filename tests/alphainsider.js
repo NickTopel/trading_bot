@@ -1,9 +1,7 @@
 
 //TODO: wsConnect
-//test no server connection on start
-  //check if websocket errors or if heartbeat errors when waiting too long without it connecting
-  //check if this.ws.close(1000, 'message') can be triggered irispective of opening connection
-//test server connection and then disconnected
-  //check if removeAllListeners prevents close event from running when calling terminate
-//test functioning connection
-  //check if invalid strategy id throws error to higher level catch statement
+//check server not available on start
+//check server disconnected after connected
+//check invalid strategy id on start
+//check deleted strategy after connecting
+//check authentication issue, invalid api key

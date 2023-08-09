@@ -1,17 +1,24 @@
 {
   "name": "@alphainsider/trading_bot",
   "version": "0.0.2",
-  "main": "index.js",
+  "main": "express.js",
   "scripts": {
-    "test": "node test.js"
+    "start": "node .",
+    "dev": "nodemon .",
+    "electron": "electron electron.js"
   },
   "dependencies": {
     "@alpacahq/alpaca-trade-api": "^3.0.1",
     "axios": "^1.4.0",
+    "express": "^4.18.2",
     "joi": "^17.9.2",
     "lodash": "^4.17.21",
     "mathjs": "^11.8.0",
     "moment": "^2.29.4",
     "ws": "^8.13.0"
+  },
+  "devDependencies": {
+    "electron": "^25.4.0",
+    "nodemon": "^3.0.1"
   }
 }

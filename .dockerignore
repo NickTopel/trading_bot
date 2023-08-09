@@ -1,0 +1,5 @@
+*
+!lib/*
+!public/*
+!express.js
+!package.json

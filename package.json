@@ -1,6 +1,6 @@
 {
   "name": "@alphainsider/trading_bot",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "main": "express.js",
   "scripts": {
     "start": "node .",

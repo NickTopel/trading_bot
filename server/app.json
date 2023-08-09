@@ -1,7 +1,8 @@
 {
   "name": "AlphaInsider Trading Bot",
   "description": "Follow strategies on AlphaInsider and make trades on your brokerage.",
-  "repository": "https://github.com/AlphaInsider/trading_bot/tree/036d5ff6f9dc5cc393030171233b2d8a46b94610/server",
+  "website": "https://alphainsider.com",
+  "repository": "https://github.com/AlphaInsider/trading_bot",
   "formation": {
     "web": {
       "quantity": 1,

@@ -30,6 +30,11 @@
       "description": "",
       "value": "paper",
       "required": false
+    },
+    "MARGIN_MULTIPLIER": {
+      "description": "",
+      "value": 0,
+      "required": false
     }
   }
 }

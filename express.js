@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 
-let lib = require('@alphainsider/trading_bot');
+let lib = require('./lib');
 
 app.get('/', (req, res) => {
   res.send('Hello World!')

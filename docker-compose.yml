@@ -3,7 +3,7 @@ services:
   server:
     image: "alphainsider/trading_bot:test"
     build:
-      context: ./server
+      context: .
       args:
         - ENVIRONMENT=development
     environment:
@@ -15,10 +15,8 @@ services:
       ALPACA_SECRET: ${ALPACA_SECRET}
       ALPACA_ACCOUNT_TYPE: ${ALPACA_ACCOUNT_TYPE}
     volumes:
-      - ./server:/app/server
+      - ./lib:/app/server/lib
+      - ./public:/app/server/public
+      - ./express.js:/app/server/express.js
       - /app/server/node_modules
-      - ./lib:/app/lib/lib
-      - ./index.js:/app/lib/index.js
-      - ./package.json:/app/lib/package.json
-      - /app/lib/node_modules
-    command: bash -c "(cd ../lib && npm install) && npm install ../lib --no-save && npm run dev"
+    command: npm run dev

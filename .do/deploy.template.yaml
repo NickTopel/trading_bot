@@ -9,11 +9,11 @@ spec:
         repo_clone_url: https://github.com/AlphaInsider/trading_bot.git
       envs:
         - key: ALPACA_KEY
-          type: SECRET
+          type: GENERAL
         - key: ALPACA_SECRET
-          type: SECRET
+          type: GENERAL
         - key: ALPHAINSIDER_API_KEY
-          type: SECRET
+          type: GENERAL
         - key: STRATEGY_ID
           type: GENERAL
         - key: MARGIN_MULTIPLIER

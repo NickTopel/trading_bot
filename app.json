@@ -28,12 +28,12 @@
     },
     "BUFFER_AMOUNT": {
       "description": "",
-      "value": 0,
+      "value": "0",
       "required": false
     },
     "MARGIN_MULTIPLIER": {
       "description": "",
-      "value": 1,
+      "value": "1",
       "required": false
     }
   }

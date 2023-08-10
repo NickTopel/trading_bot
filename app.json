@@ -26,9 +26,9 @@
       "description": "",
       "required": true
     },
-    "ALPACA_ACCOUNT_TYPE": {
+    "BUFFER_AMOUNT": {
       "description": "",
-      "value": "paper",
+      "value": "0",
       "required": false
     },
     "MARGIN_MULTIPLIER": {

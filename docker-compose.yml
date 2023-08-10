@@ -13,7 +13,6 @@ services:
       BUFFER_AMOUNT: ${BUFFER_AMOUNT}
       ALPACA_KEY: ${ALPACA_KEY}
       ALPACA_SECRET: ${ALPACA_SECRET}
-      ALPACA_ACCOUNT_TYPE: ${ALPACA_ACCOUNT_TYPE}
     volumes:
       - ./lib:/app/server/lib
       - ./public:/app/server/public

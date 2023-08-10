@@ -3,7 +3,7 @@ spec:
   services:
     - name: web
       instance_count: 1
-      instance_size_slug: basic
+      instance_size_slug: basic-xs
       git:
         branch: master
         repo_clone_url: https://github.com/AlphaInsider/trading_bot.git

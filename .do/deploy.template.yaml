@@ -15,7 +15,6 @@ spec:
         - key: ALPHAINSIDER_API_KEY
           type: SECRET
         - key: STRATEGY_ID
-          value: ""
           type: GENERAL
         - key: MARGIN_MULTIPLIER
           value: "1"

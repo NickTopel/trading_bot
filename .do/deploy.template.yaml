@@ -2,6 +2,8 @@ spec:
   name: trading-bot
   services:
     - name: web
+      instance_count: 1
+      instance_size_slug: basic
       git:
         branch: master
         repo_clone_url: https://github.com/AlphaInsider/trading_bot.git

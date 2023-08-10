@@ -28,7 +28,7 @@
     },
     "BUFFER_AMOUNT": {
       "description": "",
-      "value": "0",
+      "value": 0,
       "required": false
     },
     "MARGIN_MULTIPLIER": {

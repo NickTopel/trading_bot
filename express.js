@@ -21,8 +21,7 @@ let alphaInsider = new lib.AlphaInsider({
 });
 let alpaca = new lib.Alpaca({
   key: process.env['ALPACA_KEY'],
-  secret: process.env['ALPACA_SECRET'],
-  account_type: 'paper'
+  secret: process.env['ALPACA_SECRET']
 });
 let bot = new lib.Bot({
   AlphaInsider: alphaInsider,

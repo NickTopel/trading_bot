@@ -47,7 +47,9 @@ alphaInsider.on('error', (error) => {
 });
 
 //on close, close all positions
-alphaInsider.on('close', () => {
+alphaInsider.on('close', async () => {
   console.log('CLOSE ALL POSITIONS');
-  alpaca.closeAllPositions();
+  await alpaca.closeAllPositions();
+  await new Promise(resolve => setTimeout(resolve, 60*1000));
+  alphaInsider.wsConnect();
 });

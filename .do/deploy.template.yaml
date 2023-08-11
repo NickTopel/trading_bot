@@ -6,7 +6,7 @@ spec:
       instance_size_slug: basic-xs
       image:
         registry_type: DOCKER_HUB
-        registry: alphainsider/trading_bot
+        repository: alphainsider/trading_bot
         tag: 0.0.6
       envs:
         - key: ALPACA_KEY

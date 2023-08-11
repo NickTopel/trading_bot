@@ -7,7 +7,6 @@ spec:
       git:
         branch: master
         repo_clone_url: https://github.com/AlphaInsider/trading_bot.git
-      run_command: "npm run start"
       envs:
         - key: ALPACA_KEY
           type: GENERAL

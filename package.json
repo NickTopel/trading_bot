@@ -2,7 +2,7 @@
   "name": "@alphainsider/trading_bot",
   "version": "0.0.6",
   "private": true,
-  "main": "server.js",
+  "main": "express.js",
   "scripts": {
     "start": "node .",
     "dev": "nodemon .",

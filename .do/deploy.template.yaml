@@ -9,6 +9,9 @@ spec:
         registry: alphainsider
         repository: trading_bot
         tag: 0.0.6
+    - health_check:
+      http_path: /
+      initial_delay_seconds: 30
   envs:
     - key: ALPACA_KEY
       type: GENERAL

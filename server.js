@@ -1,10 +1,10 @@
 const path = require('path');
-const express = require('express');
+const server = require('express');
 
 let lib = require('./lib');
 
-const app = express();
-app.use(express.static(path.join(__dirname, 'public')));
+const app = server();
+app.use(server.static(path.join(__dirname, 'public')));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));

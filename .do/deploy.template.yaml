@@ -4,9 +4,10 @@ spec:
     - name: web
       instance_count: 1
       instance_size_slug: basic-xs
-      git:
-        branch: master
-        repo_clone_url: https://github.com/AlphaInsider/trading_bot.git
+      image:
+        registry_type: DOCKER_HUB
+        registry: alphainsider/trading_bot
+        tag: 0.0.6
       envs:
         - key: ALPACA_KEY
           type: GENERAL

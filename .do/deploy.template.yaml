@@ -6,7 +6,7 @@ spec:
       instance_size_slug: basic-xs
       github:
         branch: master
-        repo_clone_url: https://github.com/AlphaInsider/trading_bot.git
+        repo: https://github.com/AlphaInsider/trading_bot.git
       run_command: "npm run start"
       envs:
         - key: ALPACA_KEY

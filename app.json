@@ -33,7 +33,7 @@
     },
     "MARGIN_MULTIPLIER": {
       "description": "",
-      "value": 1,
+      "value": "1",
       "required": false
     }
   }

@@ -37,7 +37,14 @@ alphaInsider.wsConnect();
 //on trade, rebalance
 alphaInsider.on('message', (message) => {
   console.log('REBALANCE');
-  bot.rebalance();
+  bot.rebalance()
+  .catch((error) => {
+    //error log
+    console.log('Message Rebalance Error');
+    console.log(error);
+    //reconnect
+    alphaInsider.wsConnect();
+  });
 });
 
 //on error, log error
@@ -49,7 +56,10 @@ alphaInsider.on('error', (error) => {
 //on close, close all positions
 alphaInsider.on('close', async () => {
   console.log('CLOSE ALL POSITIONS');
-  await alpaca.closeAllPositions();
+  await alpaca.closeAllPositions().catch((error) => {
+    console.log('Failed to close all positions');
+    console.log(error);
+  });
   await new Promise(resolve => setTimeout(resolve, 60*1000));
   alphaInsider.wsConnect();
 });

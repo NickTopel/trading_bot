@@ -7,12 +7,18 @@ services:
       args:
         - ENVIRONMENT=development
     environment:
+      # AlphaInsider
       ALPHAINSIDER_API_KEY: ${ALPHAINSIDER_API_KEY}
       STRATEGY_ID: ${STRATEGY_ID}
       MARGIN_MULTIPLIER: ${MARGIN_MULTIPLIER}
       BUFFER_AMOUNT: ${BUFFER_AMOUNT}
+      # Alpaca
       ALPACA_KEY: ${ALPACA_KEY}
       ALPACA_SECRET: ${ALPACA_SECRET}
+      # TastyTrade
+      TASTYTRADE_EMAIL: ${TASTYTRADE_EMAIL}
+      TASTYTRADE_PASSWORD: ${TASTYTRADE_PASSWORD}
+      TASTYTRADE_ACCOUNT_ID: ${TASTYTRADE_ACCOUNT_ID}
     volumes:
       - ./lib:/app/server/lib
       - ./public:/app/server/public

@@ -1,11 +1,12 @@
 const path = require('path');
 const express = require('express');
+const api = express.Router();
 
 let lib = require('./lib');
 
 const app = express();
-app.use(express.static(path.join(__dirname, 'public')));
 
+//Router Defaults
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -13,6 +14,10 @@ app.get('*', (req, res) => {
 app.listen(process.env['PORT'] || 3000, () => {
   console.log(`Example app listening on port ${process.env['PORT'] || 3000}`)
 });
+
+//Router config
+app.use('/api', api);
+app.use(express.static(path.join(__dirname, 'public')));
 
 //RUN trading bot
 let alphaInsider = new lib.AlphaInsider({
@@ -35,31 +40,39 @@ let bot = new lib.Bot({
 alphaInsider.wsConnect();
 
 //on trade, rebalance
-alphaInsider.on('message', (message) => {
+alphaInsider.on('message', async (message) => {
   console.log('REBALANCE');
-  bot.rebalance()
-  .catch((error) => {
-    //error log
-    console.log('Message Rebalance Error');
-    console.log(error);
-    //reconnect
-    alphaInsider.wsConnect();
+  await bot.rebalance().catch((error) => {
+    //print error message
+    lib.reports.errorLog({
+      type: 'rebalance_error',
+      info: {},
+      message: error
+    });
   });
 });
 
 //on error, log error
 alphaInsider.on('error', (error) => {
-  console.log('ERROR');
-  console.log(error);
+  //print error message
+  lib.reports.errorLog({
+    type: 'alphainsider_error',
+    info: {},
+    message: error
+  });
 });
 
 //on close, close all positions
 alphaInsider.on('close', async () => {
   console.log('CLOSE ALL POSITIONS');
   await alpaca.closeAllPositions().catch((error) => {
-    console.log('Failed to close all positions');
-    console.log(error);
+    //print error message
+    lib.reports.errorLog({
+      type: 'close_all_positions_error',
+      info: {},
+      message: error
+    });
   });
   await new Promise(resolve => setTimeout(resolve, 60*1000));
-  alphaInsider.wsConnect();
+  await alphaInsider.wsConnect();
 });

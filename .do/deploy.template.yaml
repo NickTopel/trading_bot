@@ -8,7 +8,7 @@ spec:
         registry_type: DOCKER_HUB
         registry: alphainsider
         repository: trading_bot
-        tag: 0.0.6
+        tag: latest
       health_check:
         http_path: /
         initial_delay_seconds: 30

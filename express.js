@@ -1,11 +1,12 @@
 const path = require('path');
 const express = require('express');
+const api = express.Router();
 
 let lib = require('./lib');
 
 const app = express();
-app.use(express.static(path.join(__dirname, 'public')));
 
+//Router Defaults
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -13,6 +14,10 @@ app.get('*', (req, res) => {
 app.listen(process.env['PORT'] || 3000, () => {
   console.log(`Example app listening on port ${process.env['PORT'] || 3000}`)
 });
+
+//Router config
+app.use('/api', api);
+app.use(express.static(path.join(__dirname, 'public')));
 
 //RUN trading bot
 let alphaInsider = new lib.AlphaInsider({

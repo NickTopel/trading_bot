@@ -31,7 +31,6 @@ let alpaca = new lib.Alpaca({
 let bot = new lib.Bot({
   AlphaInsider: alphaInsider,
   Broker: alpaca,
-  margin_type: 'reg_t',
   multiplier: process.env['MARGIN_MULTIPLIER'] || 1,
   buffer_amount: process.env['BUFFER_AMOUNT'] || 0
 });

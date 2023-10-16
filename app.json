@@ -10,6 +10,14 @@
     }
   },
   "env": {
+    "ALPACA_KEY": {
+      "description": "",
+      "required": false
+    },
+    "ALPACA_SECRET": {
+      "description": "",
+      "required": false
+    },
     "ALPHAINSIDER_API_KEY": {
       "description": "",
       "required": true
@@ -18,22 +26,14 @@
       "description": "",
       "required": true
     },
-    "ALPACA_KEY": {
+    "MARGIN_MULTIPLIER": {
       "description": "",
-      "required": true
-    },
-    "ALPACA_SECRET": {
-      "description": "",
-      "required": true
+      "value": "1",
+      "required": false
     },
     "BUFFER_AMOUNT": {
       "description": "",
       "value": "0",
-      "required": false
-    },
-    "MARGIN_MULTIPLIER": {
-      "description": "",
-      "value": "1",
       "required": false
     }
   }

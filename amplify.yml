@@ -15,3 +15,10 @@ frontend:
   cache:
     paths:
       - node_modules/**/*
+  env:
+    ALPHAINSIDER_API_KEY: ""
+    STRATEGY_ID: ""
+    MARGIN_MULTIPLIER: "1"
+    BUFFER_AMOUNT: "0"
+    ALPACA_KEY: ""
+    ALPACA_SECRET: ""

@@ -7,6 +7,8 @@ Trading bot that follows AlphaInsider strategies
 
 [![Deploy to DigitalOcean](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/AlphaInsider/trading_bot/tree/master)
 
+[![Deploy to Amplify](https://oneclick.amplifyapp.com/button.svg)](https://console.aws.amazon.com/amplify/home#/deploy?repo=https://github.com/AlphaInsider/trading_bot/tree/master)
+
 ## Run
 `$ docker compose up`
 

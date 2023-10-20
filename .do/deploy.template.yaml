@@ -12,6 +12,18 @@ spec:
       health_check:
         http_path: /
         initial_delay_seconds: 30
+#      envs:
+#        - key: DATABASE_URL
+#          scope: RUN_TIME
+#          value: ${db.DATABASE_URL}
+#  databases:
+#    - cluster_name: app
+#      name: db
+#      db_name: db
+#      db_user: admin
+#      engine: PG
+#      version: "12"
+#      production: false
   envs:
     - key: ALPACA_KEY
       type: GENERAL

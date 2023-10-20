@@ -12,6 +12,14 @@ spec:
       health_check:
         http_path: /
         initial_delay_seconds: 30
+  databases:
+    - name: db
+      db_user: admin
+      engine: PG
+      version: "16"
+      num_nodes: 1
+      size: db-s-1vcpu-1gb
+      production: true
   envs:
     - key: ALPACA_KEY
       type: GENERAL

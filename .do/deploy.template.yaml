@@ -12,15 +12,17 @@ spec:
       health_check:
         http_path: /
         initial_delay_seconds: 30
+      envs:
+        - key: DATABASE_URL
+          scope: RUN_TIME
+          value: ${db.DATABASE_URL}
   databases:
-    - cluster_name: db
+    - cluster_name: app
       name: db
       db_name: postgres
       db_user: admin
       engine: PG
       version: "12"
-      num_nodes: 1
-      size: db-s-1vcpu-1gb
       production: true
   envs:
     - key: ALPACA_KEY

@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node .",
     "dev": "nodemon .",
+    "test": "node test.js",
     "electron": "electron electron.js"
   },
   "dependencies": {

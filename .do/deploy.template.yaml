@@ -24,7 +24,6 @@ spec:
     - cluster_name: db-cluster
       name: database
       engine: PG
-      version: "10"
       production: false
   envs:
     - key: ALPACA_KEY

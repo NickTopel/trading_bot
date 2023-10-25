@@ -5,8 +5,8 @@ spec:
       instance_count: 1
       instance_size_slug: basic-xxs
       environment_slug: node-js
-      github:
-        repo: AlphaInsider/trading_bot
+      git:
+        repo_clone_url: https://github.com/AlphaInsider/trading_bot.git
         branch: master
       build_command: npm install
       run_command: npm run setup && npm start

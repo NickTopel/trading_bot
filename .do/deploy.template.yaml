@@ -18,7 +18,7 @@ spec:
           value: ${db.DATABASE_URL}
   databases:
     - cluster_name: db-cluster
-      name: db
+      name: database
       db_user: postgres
       engine: PG
       version: "12"

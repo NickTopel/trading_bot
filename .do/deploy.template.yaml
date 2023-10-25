@@ -23,7 +23,7 @@ spec:
       db_user: admin
       engine: PG
       version: "12"
-      production: true
+      production: false
   envs:
     - key: ALPACA_KEY
       type: GENERAL

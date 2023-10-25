@@ -15,7 +15,7 @@ spec:
       envs:
         - key: DATABASE_URL
           scope: RUN_TIME
-          value: ${db.DATABASE_URL}
+          value: ${database.DATABASE_URL}
   databases:
     - cluster_name: db-cluster
       name: database

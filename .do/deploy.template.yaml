@@ -4,23 +4,27 @@ spec:
     - name: web
       instance_count: 1
       instance_size_slug: basic-xxs
-      image:
-        registry_type: DOCKER_HUB
-        registry: alphainsider
-        repository: trading_bot
-        tag: latest
+      environment_slug: node-js
+      github:
+        repo: AlphaInsider/trading_bot
+        branch: master
+      build_command: npm install
+      run_command: npm run setup && npm start
       health_check:
         http_path: /
         initial_delay_seconds: 30
       envs:
         - key: DATABASE_URL
-          scope: RUN_TIME
           value: ${database.DATABASE_URL}
+          scope: RUN_TIME
+        - key: NODE_ENV
+          value: production
+          scope: RUN_TIME
   databases:
     - cluster_name: db-cluster
       name: database
       engine: PG
-      version: "12"
+      version: "10"
       production: false
   envs:
     - key: ALPACA_KEY

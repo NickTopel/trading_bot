@@ -20,7 +20,7 @@ services:
       TASTYTRADE_PASSWORD: ${TASTYTRADE_PASSWORD}
       TASTYTRADE_ACCOUNT_ID: ${TASTYTRADE_ACCOUNT_ID}
     volumes:
-      - ./lib:/app/server/lib
+      - ./worker:/app/server/worker
       - ./public:/app/server/public
       - ./express.js:/app/server/express.js
       - /app/server/node_modules

@@ -1,7 +1,8 @@
-//libraries
-exports.reports = require('./reports.js');
 //classes
 exports.Bot = require('./bot.js');
 exports.AlphaInsider = require('./alphainsider.js');
 exports.Alpaca = require('./alpaca.js');
 exports.TastyTrade = require('./tastytrade.js');
+
+//libraries
+exports.reports = require('./reports.js');

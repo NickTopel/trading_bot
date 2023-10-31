@@ -2,7 +2,7 @@ const path = require('path');
 const express = require('express');
 const api = express.Router();
 
-let lib = require('./lib');
+let worker = require('./worker');
 
 const app = express();
 
@@ -20,15 +20,15 @@ app.use('/api', api);
 app.use(express.static(path.join(__dirname, 'public')));
 
 //RUN trading bot
-let alphaInsider = new lib.AlphaInsider({
+let alphaInsider = new worker.AlphaInsider({
   api_key: process.env['ALPHAINSIDER_API_KEY'],
   strategy_id: process.env['STRATEGY_ID']
 });
-let alpaca = new lib.Alpaca({
+let alpaca = new worker.Alpaca({
   key: process.env['ALPACA_KEY'],
   secret: process.env['ALPACA_SECRET']
 });
-let bot = new lib.Bot({
+let bot = new worker.Bot({
   AlphaInsider: alphaInsider,
   Broker: alpaca,
   multiplier: process.env['MARGIN_MULTIPLIER'] || 1,
@@ -43,7 +43,7 @@ alphaInsider.on('message', async (message) => {
   console.log('REBALANCE');
   await bot.rebalance().catch((error) => {
     //print error message
-    lib.reports.errorLog({
+    worker.reports.errorLog({
       type: 'rebalance_error',
       info: {},
       message: error
@@ -54,7 +54,7 @@ alphaInsider.on('message', async (message) => {
 //on error, log error
 alphaInsider.on('error', (error) => {
   //print error message
-  lib.reports.errorLog({
+  worker.reports.errorLog({
     type: 'alphainsider_error',
     info: {},
     message: error
@@ -66,7 +66,7 @@ alphaInsider.on('close', async () => {
   console.log('CLOSE ALL POSITIONS');
   await alpaca.closeAllPositions().catch((error) => {
     //print error message
-    lib.reports.errorLog({
+    worker.reports.errorLog({
       type: 'close_all_positions_error',
       info: {},
       message: error
